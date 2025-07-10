@@ -173,44 +173,72 @@ function calculateTotal() {
 
 // Validate form
 function validateForm() {
-    const customerName = document.getElementById('customerName').value.trim();
-    const email = document.getElementById('email').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-    const deliveryType = document.getElementById('deliveryType').value;
-    const address = document.getElementById('address').value.trim();
+    const customerName = document.getElementById('customerName');
+    const email = document.getElementById('email');
+    const phone = document.getElementById('phone');
+    const deliveryType = document.getElementById('deliveryType');
+    const address = document.getElementById('address');
     const placeOrderBtn = document.getElementById('placeOrderBtn');
     
     let isValid = true;
-    
-    // Check required fields
-    if (!customerName || !email || !phone || !deliveryType) {
-        isValid = false;
-    }
-    
-    // Check address for delivery
-    if (deliveryType === 'delivery' && !address) {
-        isValid = false;
-    }
     
     // Check if cart has items
     if (cart.length === 0) {
         isValid = false;
     }
     
-    // Validate email format
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (email && !emailRegex.test(email)) {
+    // Check required fields only if elements exist
+    if (!customerName || !customerName.value.trim()) {
         isValid = false;
+    }
+    
+    if (!email || !email.value.trim()) {
+        isValid = false;
+    }
+    
+    if (!phone || !phone.value.trim()) {
+        isValid = false;
+    }
+    
+    if (!deliveryType || !deliveryType.value) {
+        isValid = false;
+    }
+    
+    // Check address for delivery
+    if (deliveryType && deliveryType.value === 'delivery' && (!address || !address.value.trim())) {
+        isValid = false;
+    }
+    
+    // Validate email format
+    if (email && email.value.trim()) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email.value.trim())) {
+            isValid = false;
+        }
     }
     
     // Validate phone format
-    const phoneRegex = /^[0-9]{10}$/;
-    if (phone && !phoneRegex.test(phone.replace(/\s/g, ''))) {
-        isValid = false;
+    if (phone && phone.value.trim()) {
+        const phoneRegex = /^[0-9]{10}$/;
+        if (!phoneRegex.test(phone.value.trim().replace(/\s/g, ''))) {
+            isValid = false;
+        }
     }
     
     if (placeOrderBtn) {
-        placeOrderBtn.disabled = !isValid;
+        // Only disable if cart is empty, allow button to be clicked for validation feedback
+        placeOrderBtn.disabled = cart.length === 0;
+        
+        // Debug logging
+        console.log('Validation result:', {
+            isValid,
+            cartLength: cart.length,
+            customerName: customerName ? customerName.value : 'null',
+            email: email ? email.value : 'null',
+            phone: phone ? phone.value : 'null',
+            deliveryType: deliveryType ? deliveryType.value : 'null',
+            address: address ? address.value : 'null'
+        });
     }
     
     return isValid;
@@ -218,12 +246,22 @@ function validateForm() {
 
 // Handle place order
 async function handlePlaceOrder() {
+    console.log('Place order button clicked');
+    console.log('Current cart:', cart);
+    
     if (!validateForm()) {
         showError('Please fill in all required fields correctly.');
         return;
     }
     
-    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+    const paymentMethodElement = document.querySelector('input[name="paymentMethod"]:checked');
+    if (!paymentMethodElement) {
+        showError('Please select a payment method.');
+        return;
+    }
+    
+    const paymentMethod = paymentMethodElement.value;
+    console.log('Payment method selected:', paymentMethod);
     
     if (paymentMethod === 'online') {
         // Show payment gateway modal

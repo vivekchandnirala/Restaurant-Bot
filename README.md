@@ -148,6 +148,15 @@ The application includes a fake payment gateway for testing:
 3. **Missing Dependencies**
    - Run `npm install` to install all packages
 
+4. **Order Button Not Working**
+   - This has been fixed in the latest version
+   - Button now works for both Cash on Delivery and Online Payment
+   - Make sure you have items in your cart before placing order
+
+5. **Images Not Loading**
+   - Check the IMAGE_CUSTOMIZATION_GUIDE.md for detailed instructions
+   - Ensure image URLs are HTTPS and publicly accessible
+
 ### Environment Variables
 
 Create a `.env` file for production:
