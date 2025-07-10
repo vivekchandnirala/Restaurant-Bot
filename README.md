@@ -1,4 +1,4 @@
-# 🇮🇳 Indian Restaurant Bot — Full-Stack Web Application
+#Indian Restaurant Bot — Full-Stack Web Application
 
 Welcome to the **Restaurant Bot**, a dynamic full-stack web app to simplify your dining experience. This project was developed as the final submission for the **Node.js Internship at Celebal Technologies**.
 
