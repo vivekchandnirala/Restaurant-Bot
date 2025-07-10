@@ -1,0 +1,105 @@
+Build a simple and clean **Restaurant Bot Web Application** using:
+
+- **Backend:** Node.js + Express + MongoDB (via Mongoose)
+- **Frontend:** HTML + CSS + JavaScript (basic, user-friendly only)
+- ⚠️ No React or heavy frameworks
+- ✅ Use Free Chatbot logic (NO PAID APIs)
+- ✅ Focus on full working backend functionalities
+
+---
+
+🧠 This app should perform these **main functional modules**:
+
+1. **Restaurant Search**
+   - User enters a cuisine, keyword, or location
+   - Show matching restaurants from backend (use dummy data or MongoDB)
+
+2. **Menu Viewing**
+   - Each restaurant has a menu (title, image, price, description)
+   - Frontend shows menu cards (use dummy menu data if needed)
+
+3. **Reservation System**
+   - Form with name, date, time, guests
+   - Submits to backend and stores in MongoDB
+   - Show success message
+
+4. **Order Placement**
+   - User selects dishes from menu and adds to order
+   - Submit order form to backend (name, phone, address, items)
+   - Store in database (orders collection)
+
+5. **Chatbot Interface**
+   - User sends messages like “Show menu” or “I want biryani”
+   - Backend replies using **simple logic**
+     - Example: if message includes "menu", reply with menu list
+     - No need for OpenAI or paid APIs
+
+6. **JWT Login/Register (Optional but good)**
+   - Allow user to register & login
+   - Secure with JWT and show protected pages like "My Orders"
+
+---
+
+📂 FILE STRUCTURE:
+
+RestaurantBot/
+├── server/
+│ ├── app.js
+│ ├── routes/
+│ │ ├── restaurants.js
+│ │ ├── menu.js
+│ │ ├── reservations.js
+│ │ ├── orders.js
+│ │ └── chatbot.js
+│ ├── models/
+│ └── .env
+├── client/
+│ ├── index.html # Home + Search
+│ ├── menu.html # Menu listing
+│ ├── reserve.html # Reservation Form
+│ ├── order.html # Order Form
+│ ├── chat.html # Chatbot UI
+│ └── css/
+│ └── style.css # Simple styling
+
+yaml
+Copy
+Edit
+
+---
+
+📦 REQUIREMENTS:
+
+- Node.js backend handles:
+  - `GET /restaurants`
+  - `GET /menu/:restaurantId`
+  - `POST /reservations`
+  - `POST /orders`
+  - `POST /chat` → returns a reply message
+- MongoDB stores:
+  - restaurants, menus, reservations, orders
+
+---
+
+🎨 UI Instructions:
+
+- Keep UI **simple but not ugly**
+- Use Bootstrap OR write your own CSS if needed
+- Pages should have navbar or buttons to navigate
+- Show alerts or text when form is submitted
+
+---
+
+🚫 RESTRICTIONS:
+
+- ❌ Don’t use OpenAI or paid APIs
+- ✅ Chatbot can use if-else logic or keyword match
+- ✅ Don’t overcomplicate — focus on **backend working smoothly**
+
+---
+
+🏁 Goal:
+
+✅ All forms and modules should send data to backend  
+✅ Backend should store & respond correctly  
+✅ Project must look like it’s done by an intern who **understands backend properly**
