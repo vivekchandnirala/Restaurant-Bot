@@ -1,0 +1,17 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+
+# Runtime files
+*.pid
+*.seed
+
+# Optional
+package-lock.json
+.env.local
+.env.development
+.env.test
+.env.production

@@ -3,10 +3,9 @@ const Menu = require('../models/Menu');
 
 const seedData = async () => {
     try {
-        // Check if data already exists
         const existingRestaurants = await Restaurant.find();
         if (existingRestaurants.length > 0) {
-            console.log('Data already exists, skipping seed');
+            // console.log('Data already exists, skipping seed');
             return;
         }
 
@@ -65,7 +64,7 @@ const seedData = async () => {
         ];
 
         const createdRestaurants = await Restaurant.insertMany(restaurants);
-        console.log('Restaurants seeded successfully');
+        // console.log('Restaurants seeded successfully');
 
         // Create menu items for each restaurant
         const menuItems = [];

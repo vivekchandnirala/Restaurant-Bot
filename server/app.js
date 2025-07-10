@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
@@ -14,17 +15,19 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, '..')));
 
 // MongoDB connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/restaurantbot';
+const MONGODB_URI = process.env.MONGODB_URI;
 
-mongoose.connect(MONGODB_URI)
-.then(() => {
-    console.log('Connected to MongoDB');
-    // Seed data if needed
-    require('./data/seedData');
-})
-.catch(err => {
-    console.error('MongoDB connection error:', err);
+
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => {
+  console.log("✅ Connected to MongoDB Atlas");
+  require('./data/seedData');
+}).catch((err) => {
+  console.error("❌ MongoDB Connection Error:", err);
 });
+
 
 // Routes
 app.use('/api/restaurants', require('./routes/restaurants'));
@@ -62,5 +65,5 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port http://localhost:${PORT}`);
 });
