@@ -23,7 +23,7 @@ Welcome to the **Restaurant Bot**, a dynamic full-stack web app to simplify your
 ### 1. Clone & Navigate
 
 ```bash
-git clone https://github.com/vivekchandnirala/Restaurant_Bot.git
+git clone https://github.com/vivekchandnirala/Restaurant-Bot.git
 cd restaurant-bot
 
 2. Install Dependencies
