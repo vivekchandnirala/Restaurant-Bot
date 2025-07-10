@@ -11,6 +11,11 @@ This is a full-stack Restaurant Bot Web Application built with Node.js, Express,
 - Implemented MongoDB database with proper seeding of restaurant and menu data
 - Fixed server configuration to run on port 5000 with proper MongoDB connection
 - All APIs are fully functional for restaurant search, menu viewing, reservations, orders, and chatbot interactions
+- Enhanced with authentic restaurant and food images using Unsplash URLs
+- Implemented complete fake payment gateway with UPI, Credit/Debit Card, and Net Banking options
+- Added floating chatbot icon to all pages for easy access
+- Updated Order model to include payment type, method, and status tracking
+- Ensured consistent restaurant imagery across all application pages
 
 ## User Preferences
 

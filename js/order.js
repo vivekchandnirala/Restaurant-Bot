@@ -223,6 +223,161 @@ async function handlePlaceOrder() {
         return;
     }
     
+    const paymentMethod = document.querySelector('input[name="paymentMethod"]:checked').value;
+    
+    if (paymentMethod === 'online') {
+        // Show payment gateway modal
+        showPaymentModal();
+    } else {
+        // Process COD order directly
+        await processOrder('cod');
+    }
+}
+
+// Show payment gateway modal
+function showPaymentModal() {
+    const modal = new bootstrap.Modal(document.getElementById('paymentModal'));
+    document.getElementById('paymentTotal').textContent = orderTotal;
+    
+    // Setup payment method listeners
+    setupPaymentMethodListeners();
+    
+    modal.show();
+}
+
+// Setup payment method listeners
+function setupPaymentMethodListeners() {
+    const paymentMethods = document.querySelectorAll('input[name="paymentGateway"]');
+    const paymentDetails = document.getElementById('paymentDetails');
+    const processPaymentBtn = document.getElementById('processPaymentBtn');
+    
+    paymentMethods.forEach(method => {
+        method.addEventListener('change', function() {
+            updatePaymentDetails(this.value);
+        });
+    });
+    
+    processPaymentBtn.addEventListener('click', function() {
+        processPayment();
+    });
+    
+    // Initialize with default selection
+    updatePaymentDetails('upi');
+}
+
+// Update payment details based on selected method
+function updatePaymentDetails(method) {
+    const paymentDetails = document.getElementById('paymentDetails');
+    
+    switch(method) {
+        case 'upi':
+            paymentDetails.innerHTML = `
+                <div class="mb-3">
+                    <label for="upiId" class="form-label">UPI ID</label>
+                    <input type="text" class="form-control" id="upiId" placeholder="yourname@upi" required>
+                </div>
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> Enter your UPI ID to complete the payment
+                </div>
+            `;
+            break;
+        case 'card':
+            paymentDetails.innerHTML = `
+                <div class="mb-3">
+                    <label for="cardNumber" class="form-label">Card Number</label>
+                    <input type="text" class="form-control" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19" required>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <label for="expiryDate" class="form-label">Expiry Date</label>
+                        <input type="text" class="form-control" id="expiryDate" placeholder="MM/YY" maxlength="5" required>
+                    </div>
+                    <div class="col-6">
+                        <label for="cvv" class="form-label">CVV</label>
+                        <input type="text" class="form-control" id="cvv" placeholder="123" maxlength="3" required>
+                    </div>
+                </div>
+                <div class="alert alert-info mt-3">
+                    <i class="fas fa-shield-alt"></i> Your card details are secure and encrypted
+                </div>
+            `;
+            break;
+        case 'netbanking':
+            paymentDetails.innerHTML = `
+                <div class="mb-3">
+                    <label for="bank" class="form-label">Select Bank</label>
+                    <select class="form-select" id="bank" required>
+                        <option value="">Choose your bank</option>
+                        <option value="sbi">State Bank of India</option>
+                        <option value="hdfc">HDFC Bank</option>
+                        <option value="icici">ICICI Bank</option>
+                        <option value="axis">Axis Bank</option>
+                        <option value="pnb">Punjab National Bank</option>
+                    </select>
+                </div>
+                <div class="alert alert-info">
+                    <i class="fas fa-university"></i> You will be redirected to your bank's secure portal
+                </div>
+            `;
+            break;
+    }
+}
+
+// Process payment (simulate payment gateway)
+async function processPayment() {
+    const paymentMethod = document.querySelector('input[name="paymentGateway"]:checked').value;
+    const processPaymentBtn = document.getElementById('processPaymentBtn');
+    
+    // Validate payment fields
+    if (!validatePaymentFields(paymentMethod)) {
+        showError('Please fill in all payment details correctly.');
+        return;
+    }
+    
+    // Simulate payment processing
+    processPaymentBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    processPaymentBtn.disabled = true;
+    
+    try {
+        // Simulate payment gateway delay
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        // Hide payment modal
+        const paymentModal = bootstrap.Modal.getInstance(document.getElementById('paymentModal'));
+        paymentModal.hide();
+        
+        // Process order with online payment
+        await processOrder('online', paymentMethod);
+        
+    } catch (error) {
+        showError('Payment failed. Please try again.');
+    } finally {
+        processPaymentBtn.innerHTML = '<i class="fas fa-lock"></i> Pay Now';
+        processPaymentBtn.disabled = false;
+    }
+}
+
+// Validate payment fields
+function validatePaymentFields(method) {
+    switch(method) {
+        case 'upi':
+            const upiId = document.getElementById('upiId').value.trim();
+            return upiId.length > 0 && upiId.includes('@');
+        case 'card':
+            const cardNumber = document.getElementById('cardNumber').value.trim();
+            const expiryDate = document.getElementById('expiryDate').value.trim();
+            const cvv = document.getElementById('cvv').value.trim();
+            return cardNumber.length >= 13 && expiryDate.length === 5 && cvv.length === 3;
+        case 'netbanking':
+            const bank = document.getElementById('bank').value;
+            return bank.length > 0;
+        default:
+            return false;
+    }
+}
+
+// Process order with payment information
+async function processOrder(paymentType, paymentMethod = null) {
     const orderData = {
         customerName: document.getElementById('customerName').value.trim(),
         email: document.getElementById('email').value.trim(),
@@ -230,7 +385,9 @@ async function handlePlaceOrder() {
         address: document.getElementById('address').value.trim(),
         restaurantId: selectedRestaurant ? selectedRestaurant._id : null,
         items: cart,
-        deliveryType: document.getElementById('deliveryType').value
+        deliveryType: document.getElementById('deliveryType').value,
+        paymentType: paymentType,
+        paymentMethod: paymentMethod
     };
     
     // Validate order data
@@ -262,7 +419,7 @@ async function handlePlaceOrder() {
         localStorage.removeItem('selectedRestaurant');
         
         // Show success modal
-        showSuccessModal(result.order);
+        showSuccessModal(result.order, paymentType);
         
         // Reset form
         document.getElementById('orderForm').reset();
@@ -278,9 +435,13 @@ async function handlePlaceOrder() {
 }
 
 // Show success modal
-function showSuccessModal(order) {
+function showSuccessModal(order, paymentType) {
     const modal = new bootstrap.Modal(document.getElementById('successModal'));
     const orderDetails = document.getElementById('orderDetails');
+    
+    const paymentInfo = paymentType === 'online' 
+        ? `<p><strong>Payment:</strong> <span class="badge bg-success">Paid Online</span></p>` 
+        : `<p><strong>Payment:</strong> <span class="badge bg-warning">Cash on Delivery</span></p>`;
     
     orderDetails.innerHTML = `
         <div class="order-summary">
@@ -292,11 +453,12 @@ function showSuccessModal(order) {
             <p><strong>Delivery Type:</strong> ${order.deliveryType === 'delivery' ? 'Home Delivery' : 'Restaurant Pickup'}</p>
             ${order.deliveryType === 'delivery' ? `<p><strong>Address:</strong> ${order.address}</p>` : ''}
             <p><strong>Total Amount:</strong> ₹${order.totalAmount}</p>
+            ${paymentInfo}
             <p><strong>Status:</strong> <span class="badge bg-warning">Pending</span></p>
         </div>
         <div class="alert alert-success mt-3">
             <i class="fas fa-check-circle"></i> 
-            Your order has been placed successfully! You will receive a confirmation call shortly.
+            Your order has been placed successfully! ${paymentType === 'online' ? 'Payment received.' : 'You will receive a confirmation call shortly.'}
         </div>
     `;
     

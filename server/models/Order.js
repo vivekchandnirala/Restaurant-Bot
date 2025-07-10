@@ -61,6 +61,23 @@ const orderSchema = new mongoose.Schema({
         type: String,
         enum: ['delivery', 'pickup'],
         default: 'delivery'
+    },
+    paymentType: {
+        type: String,
+        enum: ['cod', 'online'],
+        default: 'cod'
+    },
+    paymentMethod: {
+        type: String,
+        enum: ['upi', 'card', 'netbanking'],
+        required: false
+    },
+    paymentStatus: {
+        type: String,
+        enum: ['pending', 'completed', 'failed'],
+        default: function() {
+            return this.paymentType === 'online' ? 'completed' : 'pending';
+        }
     }
 }, {
     timestamps: true
